@@ -23,48 +23,12 @@
                 Official Certificate Verification Portal
             </p>
 
-            <div class="verified">
-                ✓ Certificate Verified
-            </div>
+            <div id="result">
 
-            <div class="info-row">
-                <span class="label">Certificate ID</span>
-                <span class="value">BCTI-2026-000125</span>
-            </div>
+                <p style="text-align:center;">
+                    Verifying certificate...
+                </p>
 
-            <div class="info-row">
-                <span class="label">Student Name</span>
-                <span class="value">Md. Rahim Ahmed</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Course Name</span>
-                <span class="value">Computer Office Application</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Course Duration</span>
-                <span class="value">3 Months</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Completion Date</span>
-                <span class="value">15 August 2026</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Issue Date</span>
-                <span class="value">19 August 2026</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Institute Name</span>
-                <span class="value">Your Training Institute</span>
-            </div>
-
-            <div class="info-row">
-                <span class="label">Certificate Status</span>
-                <span class="value valid">VALID</span>
             </div>
 
             <div class="footer">
@@ -75,6 +39,177 @@
         </div>
 
     </div>
+
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbz9G8kyCIsxHPvn3CMUbCHi6sWXZum213cmAPzgM9aT5_wp6yFR-QaQ1Eg_ARx3gixd5A/exec";
+
+
+const params = new URLSearchParams(window.location.search);
+
+const certificateId = params.get("id");
+
+
+if (!certificateId) {
+
+    document.getElementById("result").innerHTML = `
+
+        <div class="verified" style="color:#c62828;">
+            ✕ Certificate ID Missing
+        </div>
+
+        <p style="text-align:center;">
+            Please scan a valid certificate QR code.
+        </p>
+
+    `;
+
+} else {
+
+    fetch(API_URL + "?id=" + encodeURIComponent(certificateId))
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.status === "success") {
+
+                document.getElementById("result").innerHTML = `
+
+                    <div class="verified">
+                        ✓ Certificate Verified
+                    </div>
+
+                    <div class="info-row">
+                        <span class="label">
+                            Certificate ID
+                        </span>
+
+                        <span class="value">
+                            ${data.certificateId}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Student Name
+                        </span>
+
+                        <span class="value">
+                            ${data.studentName}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Course Name
+                        </span>
+
+                        <span class="value">
+                            ${data.courseName}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Course Duration
+                        </span>
+
+                        <span class="value">
+                            ${data.courseDuration}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Completion Date
+                        </span>
+
+                        <span class="value">
+                            ${data.completionDate}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Issue Date
+                        </span>
+
+                        <span class="value">
+                            ${data.issueDate}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Institute Name
+                        </span>
+
+                        <span class="value">
+                            ${data.instituteName}
+                        </span>
+                    </div>
+
+
+                    <div class="info-row">
+                        <span class="label">
+                            Certificate Status
+                        </span>
+
+                        <span class="value valid">
+                            ${data.certificateStatus}
+                        </span>
+                    </div>
+
+                `;
+
+            } else {
+
+                document.getElementById("result").innerHTML = `
+
+                    <div class="verified"
+                         style="color:#c62828;">
+                        ✕ Certificate Not Found
+                    </div>
+
+                    <p style="text-align:center;">
+                        This certificate could not be verified.
+                    </p>
+
+                `;
+
+            }
+
+        })
+
+        .catch(error => {
+
+            document.getElementById("result").innerHTML = `
+
+                <div class="verified"
+                     style="color:#c62828;">
+                    ✕ Verification Error
+                </div>
+
+                <p style="text-align:center;">
+                    Unable to connect to the verification server.
+                </p>
+
+            `;
+
+        });
+
+}
+
+</script>
 
 </body>
 </html>
