@@ -5,7 +5,8 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Certificate Verification</title>
 
@@ -13,95 +14,90 @@
 
 </head>
 
-
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <div class="card">
+    <div class="card">
 
-            <h1 class="title">
-                Certificate Verification
-            </h1>
+        <h1 class="title">
+            Certificate Verification
+        </h1>
 
-            <p class="subtitle">
-                Official Certificate Verification Portal
+        <p class="subtitle">
+            Official Certificate Verification Portal
+        </p>
+
+        <div id="result">
+
+            <p style="text-align:center;">
+                Verifying certificate...
             </p>
 
+        </div>
 
-            <div id="result">
+        <div class="footer">
 
-                <p style="text-align:center;">
-                    Verifying certificate...
-                </p>
-
-            </div>
-
-
-            <div class="footer">
-
-                This certificate has been electronically verified
-                through the official verification system.
-
-            </div>
+            This certificate has been electronically verified
+            through the official verification system.
 
         </div>
 
     </div>
 
+</div>
 
 
 <script>
-
-
-// Google Apps Script API
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxN1Xg93vHRMDNsMLfgDLIkCQnNNYVO-0zDMdYQQKH2o9XVpxN52L-rjPWCfh01Fg6R6w/exec";
 
 
-// Get Certificate ID from URL
+const params =
+new URLSearchParams(window.location.search);
 
-const params = new URLSearchParams(window.location.search);
+const certificateId =
+params.get("id");
 
-const certificateId = params.get("id");
-
-
-// Certificate ID missing
 
 if (!certificateId) {
 
     document.getElementById("result").innerHTML = `
 
         <div class="verified invalid">
-
             ✕ Certificate ID Missing
-
         </div>
 
         <p style="text-align:center;">
-
             Please scan a valid certificate QR code.
-
         </p>
 
     `;
 
-}
+} else {
 
 
-// Certificate ID found
+    // Unique callback name
 
-else {
+    const callbackName =
+        "certificateCallback_" +
+        Date.now();
 
-    fetch(
-        API_URL + "?id=" +
-        encodeURIComponent(certificateId)
-    )
 
-    .then(response => response.json())
+    // Create callback function
 
-    .then(data => {
+    window[callbackName] = function(data) {
+
+
+        // Remove script
+
+        const script =
+            document.getElementById("apiScript");
+
+        if (script) {
+            script.remove();
+        }
 
 
         // Certificate found
@@ -109,34 +105,25 @@ else {
         if (data.status === "success") {
 
 
-            // Certificate status
-
-            let statusText = data.certificateStatus;
-
-
-            let statusClass = "valid";
+            let isValid =
+                String(data.certificateStatus)
+                .toUpperCase() === "VALID";
 
 
-            if (
-                String(statusText).toUpperCase() !== "VALID"
-            ) {
-
-                statusClass = "invalid";
-
-            }
+            let statusClass =
+                isValid ? "valid" : "invalid";
 
 
-            // Display certificate
+            let statusTitle =
+                isValid
+                ? "✓ Certificate Verified"
+                : "✕ Certificate Invalid";
+
 
             document.getElementById("result").innerHTML = `
 
                 <div class="verified ${statusClass}">
-
-                    ${statusClass === "valid"
-                        ? "✓ Certificate Verified"
-                        : "✕ Certificate Invalid"
-                    }
-
+                    ${statusTitle}
                 </div>
 
 
@@ -238,9 +225,7 @@ else {
                     </span>
 
                     <span class="value ${statusClass}">
-
-                        ${statusText}
-
+                        ${data.certificateStatus}
                     </span>
 
                 </div>
@@ -257,68 +242,77 @@ else {
             document.getElementById("result").innerHTML = `
 
                 <div class="verified invalid">
-
                     ✕ Certificate Not Found
-
                 </div>
 
                 <p style="text-align:center;">
-
                     This certificate could not be verified.
-
                 </p>
 
             `;
 
         }
 
-    })
+
+        delete window[callbackName];
+
+    };
 
 
-    // Connection error
+    // Create JSONP request
 
-    .catch(error => {
+    const script =
+        document.createElement("script");
+
+
+    script.id = "apiScript";
+
+
+    script.src =
+        API_URL +
+        "?id=" +
+        encodeURIComponent(certificateId) +
+        "&callback=" +
+        callbackName;
+
+
+    script.onerror = function() {
 
         document.getElementById("result").innerHTML = `
 
             <div class="verified invalid">
-
                 ✕ Verification Error
-
             </div>
 
             <p style="text-align:center;">
-
                 Unable to connect to the verification server.
-
             </p>
 
         `;
 
-    });
+        delete window[callbackName];
+
+    };
+
+
+    document.body.appendChild(script);
 
 }
 
 
-
-// Format date
-
 function formatDate(dateString) {
 
     if (!dateString) {
-
         return "";
-
     }
 
 
-    const date = new Date(dateString);
+    const date =
+        new Date(dateString);
 
 
     if (isNaN(date.getTime())) {
-
         return dateString;
-
     }
 
 
@@ -333,9 +327,7 @@ function formatDate(dateString) {
 
 }
 
-
 </script>
-
 
 </body>
 
