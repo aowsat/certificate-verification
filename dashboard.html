@@ -5,8 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Certificate Admin Dashboard</title>
 
@@ -24,7 +23,7 @@
         }
 
         .header {
-            background: #ffffff;
+            background: white;
             padding: 20px 30px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             display: flex;
@@ -44,6 +43,7 @@
             padding: 10px 18px;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .container {
@@ -54,6 +54,14 @@
 
         .welcome {
             margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #666;
         }
 
         .cards {
@@ -90,6 +98,7 @@
 
         .form-box h2 {
             margin-top: 0;
+            margin-bottom: 25px;
         }
 
         .form-grid {
@@ -116,6 +125,12 @@
             font-size: 15px;
         }
 
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
         .full {
             grid-column: 1 / -1;
         }
@@ -129,6 +144,10 @@
             border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
+        }
+
+        .save-btn:hover {
+            opacity: 0.9;
         }
 
         .save-btn:disabled {
@@ -155,24 +174,62 @@
 
         .qr-box {
             display: none;
-            margin-top: 25px;
+            margin-top: 30px;
             padding: 25px;
             text-align: center;
             border: 1px solid #ddd;
             border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .qr-box h3 {
+            margin-top: 0;
         }
 
         .qr-box img {
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            height: 220px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .certificate-id {
+            font-size: 18px;
+            margin: 15px 0;
         }
 
         .verification-link {
             word-break: break-all;
-            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .verification-link a {
+            color: #1a73e8;
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #198754;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
         @media (max-width: 700px) {
+
+            .header {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
 
             .cards {
                 grid-template-columns: 1fr;
@@ -196,14 +253,17 @@
 <body>
 
 
+<!-- HEADER -->
+
 <div class="header">
 
     <h1>
         Certificate Admin Dashboard
     </h1>
 
-    <button class="logout"
-            onclick="logout()">
+    <button
+        class="logout"
+        onclick="logout()">
 
         Logout
 
@@ -212,8 +272,13 @@
 </div>
 
 
+
+<!-- MAIN -->
+
 <div class="container">
 
+
+    <!-- WELCOME -->
 
     <div class="welcome">
 
@@ -228,7 +293,11 @@
     </div>
 
 
+
+    <!-- STATISTICS -->
+
     <div class="cards">
+
 
         <div class="card">
 
@@ -236,14 +305,16 @@
                 Total Certificates
             </h3>
 
-            <div class="number"
-                 id="totalCertificates">
+            <div
+                class="number"
+                id="totalCertificates">
 
                 --
 
             </div>
 
         </div>
+
 
 
         <div class="card">
@@ -252,14 +323,16 @@
                 Valid Certificates
             </h3>
 
-            <div class="number"
-                 id="validCertificates">
+            <div
+                class="number"
+                id="validCertificates">
 
                 --
 
             </div>
 
         </div>
+
 
 
         <div class="card">
@@ -268,8 +341,9 @@
                 Revoked Certificates
             </h3>
 
-            <div class="number"
-                 id="revokedCertificates">
+            <div
+                class="number"
+                id="revokedCertificates">
 
                 --
 
@@ -277,8 +351,12 @@
 
         </div>
 
+
     </div>
 
+
+
+    <!-- ADD CERTIFICATE -->
 
     <div class="form-box">
 
@@ -290,10 +368,12 @@
         <div class="form-grid">
 
 
+            <!-- STUDENT NAME -->
+
             <div class="field">
 
-                <label>
-                    Student Name
+                <label for="studentName">
+                    Student Name *
                 </label>
 
                 <input
@@ -305,10 +385,13 @@
             </div>
 
 
+
+            <!-- COURSE NAME -->
+
             <div class="field">
 
-                <label>
-                    Course Name
+                <label for="courseName">
+                    Course Name *
                 </label>
 
                 <input
@@ -320,10 +403,13 @@
             </div>
 
 
+
+            <!-- COURSE DURATION -->
+
             <div class="field">
 
-                <label>
-                    Course Duration
+                <label for="courseDuration">
+                    Course Duration *
                 </label>
 
                 <input
@@ -335,10 +421,13 @@
             </div>
 
 
+
+            <!-- COMPLETION DATE -->
+
             <div class="field">
 
-                <label>
-                    Completion Date
+                <label for="completionDate">
+                    Completion Date *
                 </label>
 
                 <input
@@ -349,9 +438,12 @@
             </div>
 
 
+
+            <!-- INSTITUTE -->
+
             <div class="field full">
 
-                <label>
+                <label for="instituteName">
                     Institute Name
                 </label>
 
@@ -364,9 +456,12 @@
             </div>
 
 
+
+            <!-- STATUS -->
+
             <div class="field">
 
-                <label>
+                <label for="status">
                     Certificate Status
                 </label>
 
@@ -388,6 +483,9 @@
         </div>
 
 
+
+        <!-- SAVE -->
+
         <button
             class="save-btn"
             id="saveButton"
@@ -398,83 +496,157 @@
         </button>
 
 
-        <div id="message"
-             class="message">
+
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message">
         </div>
 
 
-        <div id="qrBox"
-             class="qr-box">
+
+        <!-- QR -->
+
+        <div
+            id="qrBox"
+            class="qr-box">
+
 
             <h3>
-                Certificate QR Code
+                Certificate Created Successfully
             </h3>
 
-            <img id="qrImage"
-                 src=""
-                 alt="Certificate QR Code">
+
+            <div class="certificate-id">
+
+                Certificate ID:
+
+                <strong id="generatedId">
+                </strong>
+
+            </div>
+
+
+            <img
+                id="qrImage"
+                src=""
+                alt="Certificate QR Code"
+            >
+
 
             <p>
-                Certificate ID:
-                <strong id="generatedId"></strong>
+                Scan this QR code to verify the certificate.
             </p>
 
+
             <p class="verification-link">
-                <a id="verificationLink"
-                   href="#"
-                   target="_blank">
+
+                <a
+                    id="verificationLink"
+                    href="#"
+                    target="_blank">
                 </a>
+
             </p>
+
+
+            <button
+                class="download-btn"
+                onclick="downloadQR()">
+
+                Open QR Image
+
+            </button>
+
 
         </div>
 
 
     </div>
 
+
 </div>
+
 
 
 <script>
 
 
+/*
+========================================
+GOOGLE APPS SCRIPT API
+========================================
+*/
+
 const API_URL =
 "https://script.google.com/macros/s/AKfycbxN1Xg93vHRMDNsMLfgDLIkCQnNNYVO-0zDMdYQQKH2o9XVpxN52L-rjPWCfh01Fg6R6w/exec";
 
+
+
+/*
+========================================
+SAVE CERTIFICATE
+========================================
+*/
 
 function saveCertificate() {
 
 
     const studentName =
-        document.getElementById("studentName").value.trim();
+        document
+        .getElementById("studentName")
+        .value
+        .trim();
 
 
     const courseName =
-        document.getElementById("courseName").value.trim();
+        document
+        .getElementById("courseName")
+        .value
+        .trim();
 
 
     const courseDuration =
-        document.getElementById("courseDuration").value.trim();
+        document
+        .getElementById("courseDuration")
+        .value
+        .trim();
 
 
     const completionDate =
-        document.getElementById("completionDate").value;
+        document
+        .getElementById("completionDate")
+        .value;
 
 
     const instituteName =
-        document.getElementById("instituteName").value.trim();
+        document
+        .getElementById("instituteName")
+        .value
+        .trim();
 
 
     const status =
-        document.getElementById("status").value;
+        document
+        .getElementById("status")
+        .value;
 
 
     const message =
-        document.getElementById("message");
+        document
+        .getElementById("message");
 
 
     const button =
-        document.getElementById("saveButton");
+        document
+        .getElementById("saveButton");
 
+
+
+    /*
+    Validate fields
+    */
 
     if (
         !studentName ||
@@ -493,31 +665,56 @@ function saveCertificate() {
     }
 
 
+
+    /*
+    Disable button
+    */
+
     button.disabled = true;
 
     button.innerText =
         "Saving...";
 
 
+
+    /*
+    Create unique callback
+    */
+
     const callbackName =
         "saveCallback_" +
         Date.now();
 
 
+
+    /*
+    Callback function
+    */
+
     window[callbackName] =
         function(data) {
 
 
-            const script =
-                document.getElementById(
-                    "saveScript"
-                );
+            /*
+            Remove script
+            */
+
+            const oldScript =
+                document
+                .getElementById("saveScript");
 
 
-            if (script) {
-                script.remove();
+            if (oldScript) {
+
+                oldScript.remove();
+
             }
 
+
+
+            /*
+            Enable button
+            */
 
             button.disabled = false;
 
@@ -525,7 +722,14 @@ function saveCertificate() {
                 "Save Certificate";
 
 
-            if (data.status === "success") {
+
+            /*
+            SUCCESS
+            */
+
+            if (
+                data.status === "success"
+            ) {
 
 
                 showMessage(
@@ -534,11 +738,23 @@ function saveCertificate() {
                 );
 
 
-                document.getElementById(
+
+                /*
+                Certificate ID
+                */
+
+                document
+                .getElementById(
                     "generatedId"
-                ).innerText =
+                )
+                .innerText =
                     data.certificateId;
 
+
+
+                /*
+                Verification URL
+                */
 
                 const verificationUrl =
                     "https://aowsat.github.io/" +
@@ -549,20 +765,29 @@ function saveCertificate() {
                     );
 
 
-                document.getElementById(
-                    "verificationLink"
-                ).href =
+
+                /*
+                Show link
+                */
+
+                const link =
+                    document
+                    .getElementById(
+                        "verificationLink"
+                    );
+
+
+                link.href =
                     verificationUrl;
 
 
-                document.getElementById(
-                    "verificationLink"
-                ).innerText =
+                link.innerText =
                     verificationUrl;
+
 
 
                 /*
-                QR Code
+                Generate QR
                 */
 
                 const qrUrl =
@@ -573,43 +798,67 @@ function saveCertificate() {
                     );
 
 
-                document.getElementById(
+
+                document
+                .getElementById(
                     "qrImage"
-                ).src =
+                )
+                .src =
                     qrUrl;
 
 
-                document.getElementById(
+
+                /*
+                Show QR section
+                */
+
+                document
+                .getElementById(
                     "qrBox"
-                ).style.display =
+                )
+                .style.display =
                     "block";
+
 
 
                 /*
                 Clear form
                 */
 
-                document.getElementById(
+                document
+                .getElementById(
                     "studentName"
-                ).value = "";
+                )
+                .value = "";
 
 
-                document.getElementById(
+                document
+                .getElementById(
                     "courseName"
-                ).value = "";
+                )
+                .value = "";
 
 
-                document.getElementById(
+                document
+                .getElementById(
                     "courseDuration"
-                ).value = "";
+                )
+                .value = "";
 
 
-                document.getElementById(
+                document
+                .getElementById(
                     "completionDate"
-                ).value = "";
+                )
+                .value = "";
+
 
 
             }
+
+            /*
+            ERROR
+            */
 
             else {
 
@@ -623,61 +872,94 @@ function saveCertificate() {
             }
 
 
+
+            /*
+            Remove callback
+            */
+
             delete window[callbackName];
 
         };
 
 
+
+    /*
+    Create JSONP script
+    */
+
     const script =
-        document.createElement("script");
+        document.createElement(
+            "script"
+        );
 
 
     script.id =
         "saveScript";
 
 
+
+    /*
+    API URL
+    */
+
     script.src =
         API_URL +
+
         "?action=save" +
+
         "&studentName=" +
         encodeURIComponent(
             studentName
         ) +
+
         "&courseName=" +
         encodeURIComponent(
             courseName
         ) +
+
         "&courseDuration=" +
         encodeURIComponent(
             courseDuration
         ) +
+
         "&completionDate=" +
         encodeURIComponent(
             completionDate
         ) +
+
         "&instituteName=" +
         encodeURIComponent(
             instituteName
         ) +
+
         "&status=" +
         encodeURIComponent(
             status
         ) +
+
         "&callback=" +
         callbackName;
 
 
+
+    /*
+    Connection error
+    */
+
     script.onerror =
         function() {
 
-            button.disabled = false;
+
+            button.disabled =
+                false;
+
 
             button.innerText =
                 "Save Certificate";
 
 
             showMessage(
-                "Unable to connect to the server.",
+                "Unable to connect to the verification server.",
                 "error"
             );
 
@@ -687,18 +969,34 @@ function saveCertificate() {
         };
 
 
-    document.body.appendChild(script);
+
+    /*
+    Add script
+    */
+
+    document
+    .body
+    .appendChild(script);
 
 }
 
+
+
+/*
+========================================
+MESSAGE
+========================================
+*/
 
 function showMessage(
     text,
     type
 ) {
 
+
     const message =
-        document.getElementById(
+        document
+        .getElementById(
             "message"
         );
 
@@ -716,6 +1014,44 @@ function showMessage(
 
 }
 
+
+
+/*
+========================================
+OPEN QR IMAGE
+========================================
+*/
+
+function downloadQR() {
+
+
+    const qrImage =
+        document
+        .getElementById(
+            "qrImage"
+        );
+
+
+    if (
+        qrImage.src
+    ) {
+
+        window.open(
+            qrImage.src,
+            "_blank"
+        );
+
+    }
+
+}
+
+
+
+/*
+========================================
+LOGOUT
+========================================
+*/
 
 function logout() {
 
