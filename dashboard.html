@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard</title>
+    <title>Certificate Admin Dashboard</title>
 
     <style>
 
@@ -131,11 +131,45 @@
             cursor: pointer;
         }
 
+        .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .message {
             margin-top: 20px;
-            padding: 12px;
+            padding: 14px;
             border-radius: 6px;
             display: none;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .qr-box {
+            display: none;
+            margin-top: 25px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .qr-box img {
+            width: 180px;
+            height: 180px;
+        }
+
+        .verification-link {
+            word-break: break-all;
+            margin-top: 10px;
         }
 
         @media (max-width: 700px) {
@@ -170,7 +204,9 @@
 
     <button class="logout"
             onclick="logout()">
+
         Logout
+
     </button>
 
 </div>
@@ -200,8 +236,11 @@
                 Total Certificates
             </h3>
 
-            <div class="number">
-                1
+            <div class="number"
+                 id="totalCertificates">
+
+                --
+
             </div>
 
         </div>
@@ -213,8 +252,11 @@
                 Valid Certificates
             </h3>
 
-            <div class="number">
-                1
+            <div class="number"
+                 id="validCertificates">
+
+                --
+
             </div>
 
         </div>
@@ -226,8 +268,11 @@
                 Revoked Certificates
             </h3>
 
-            <div class="number">
-                0
+            <div class="number"
+                 id="revokedCertificates">
+
+                --
+
             </div>
 
         </div>
@@ -243,22 +288,6 @@
 
 
         <div class="form-grid">
-
-
-            <div class="field">
-
-                <label>
-                    Certificate ID
-                </label>
-
-                <input
-                    type="text"
-                    id="certificateId"
-                    value="BCTI-2026-000126"
-                    readonly
-                >
-
-            </div>
 
 
             <div class="field">
@@ -320,20 +349,6 @@
             </div>
 
 
-            <div class="field">
-
-                <label>
-                    Issue Date
-                </label>
-
-                <input
-                    type="date"
-                    id="issueDate"
-                >
-
-            </div>
-
-
             <div class="field full">
 
                 <label>
@@ -373,8 +388,10 @@
         </div>
 
 
-        <button class="save-btn"
-                onclick="saveCertificate()">
+        <button
+            class="save-btn"
+            id="saveButton"
+            onclick="saveCertificate()">
 
             Save Certificate
 
@@ -386,6 +403,32 @@
         </div>
 
 
+        <div id="qrBox"
+             class="qr-box">
+
+            <h3>
+                Certificate QR Code
+            </h3>
+
+            <img id="qrImage"
+                 src=""
+                 alt="Certificate QR Code">
+
+            <p>
+                Certificate ID:
+                <strong id="generatedId"></strong>
+            </p>
+
+            <p class="verification-link">
+                <a id="verificationLink"
+                   href="#"
+                   target="_blank">
+                </a>
+            </p>
+
+        </div>
+
+
     </div>
 
 </div>
@@ -393,20 +436,283 @@
 
 <script>
 
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxN1Xg93vHRMDNsMLfgDLIkCQnNNYVO-0zDMdYQQKH2o9XVpxN52L-rjPWCfh01Fg6R6w/exec";
+
+
 function saveCertificate() {
+
+
+    const studentName =
+        document.getElementById("studentName").value.trim();
+
+
+    const courseName =
+        document.getElementById("courseName").value.trim();
+
+
+    const courseDuration =
+        document.getElementById("courseDuration").value.trim();
+
+
+    const completionDate =
+        document.getElementById("completionDate").value;
+
+
+    const instituteName =
+        document.getElementById("instituteName").value.trim();
+
+
+    const status =
+        document.getElementById("status").value;
+
 
     const message =
         document.getElementById("message");
 
 
-    message.style.display = "block";
+    const button =
+        document.getElementById("saveButton");
 
-    message.style.background = "#e8f5e9";
 
-    message.style.color = "#2e7d32";
+    if (
+        !studentName ||
+        !courseName ||
+        !courseDuration ||
+        !completionDate
+    ) {
+
+        showMessage(
+            "Please fill in all required fields.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.innerText =
+        "Saving...";
+
+
+    const callbackName =
+        "saveCallback_" +
+        Date.now();
+
+
+    window[callbackName] =
+        function(data) {
+
+
+            const script =
+                document.getElementById(
+                    "saveScript"
+                );
+
+
+            if (script) {
+                script.remove();
+            }
+
+
+            button.disabled = false;
+
+            button.innerText =
+                "Save Certificate";
+
+
+            if (data.status === "success") {
+
+
+                showMessage(
+                    "Certificate saved successfully!",
+                    "success"
+                );
+
+
+                document.getElementById(
+                    "generatedId"
+                ).innerText =
+                    data.certificateId;
+
+
+                const verificationUrl =
+                    "https://aowsat.github.io/" +
+                    "certificate-verification/" +
+                    "verify.html?id=" +
+                    encodeURIComponent(
+                        data.certificateId
+                    );
+
+
+                document.getElementById(
+                    "verificationLink"
+                ).href =
+                    verificationUrl;
+
+
+                document.getElementById(
+                    "verificationLink"
+                ).innerText =
+                    verificationUrl;
+
+
+                /*
+                QR Code
+                */
+
+                const qrUrl =
+                    "https://api.qrserver.com/v1/create-qr-code/" +
+                    "?size=300x300&data=" +
+                    encodeURIComponent(
+                        verificationUrl
+                    );
+
+
+                document.getElementById(
+                    "qrImage"
+                ).src =
+                    qrUrl;
+
+
+                document.getElementById(
+                    "qrBox"
+                ).style.display =
+                    "block";
+
+
+                /*
+                Clear form
+                */
+
+                document.getElementById(
+                    "studentName"
+                ).value = "";
+
+
+                document.getElementById(
+                    "courseName"
+                ).value = "";
+
+
+                document.getElementById(
+                    "courseDuration"
+                ).value = "";
+
+
+                document.getElementById(
+                    "completionDate"
+                ).value = "";
+
+
+            }
+
+            else {
+
+
+                showMessage(
+                    data.message ||
+                    "Unable to save certificate.",
+                    "error"
+                );
+
+            }
+
+
+            delete window[callbackName];
+
+        };
+
+
+    const script =
+        document.createElement("script");
+
+
+    script.id =
+        "saveScript";
+
+
+    script.src =
+        API_URL +
+        "?action=save" +
+        "&studentName=" +
+        encodeURIComponent(
+            studentName
+        ) +
+        "&courseName=" +
+        encodeURIComponent(
+            courseName
+        ) +
+        "&courseDuration=" +
+        encodeURIComponent(
+            courseDuration
+        ) +
+        "&completionDate=" +
+        encodeURIComponent(
+            completionDate
+        ) +
+        "&instituteName=" +
+        encodeURIComponent(
+            instituteName
+        ) +
+        "&status=" +
+        encodeURIComponent(
+            status
+        ) +
+        "&callback=" +
+        callbackName;
+
+
+    script.onerror =
+        function() {
+
+            button.disabled = false;
+
+            button.innerText =
+                "Save Certificate";
+
+
+            showMessage(
+                "Unable to connect to the server.",
+                "error"
+            );
+
+
+            delete window[callbackName];
+
+        };
+
+
+    document.body.appendChild(script);
+
+}
+
+
+function showMessage(
+    text,
+    type
+) {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
 
     message.innerText =
-        "Certificate form is ready. Database connection will be added next.";
+        text;
+
+
+    message.className =
+        "message " + type;
+
+
+    message.style.display =
+        "block";
 
 }
 
