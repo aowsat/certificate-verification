@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Certificate Verification</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
@@ -23,6 +28,7 @@
                 Official Certificate Verification Portal
             </p>
 
+
             <div id="result">
 
                 <p style="text-align:center;">
@@ -31,9 +37,12 @@
 
             </div>
 
+
             <div class="footer">
+
                 This certificate has been electronically verified
                 through the official verification system.
+
             </div>
 
         </div>
@@ -41,175 +50,293 @@
     </div>
 
 
+
 <script>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycbz9G8kyCIsxHPvn3CMUbCHi6sWXZum213cmAPzgM9aT5_wp6yFR-QaQ1Eg_ARx3gixd5A/exec";
 
+// Google Apps Script API
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxN1Xg93vHRMDNsMLfgDLIkCQnNNYVO-0zDMdYQQKH2o9XVpxN52L-rjPWCfh01Fg6R6w/exec";
+
+
+// Get Certificate ID from URL
 
 const params = new URLSearchParams(window.location.search);
 
 const certificateId = params.get("id");
 
 
+// Certificate ID missing
+
 if (!certificateId) {
 
     document.getElementById("result").innerHTML = `
 
-        <div class="verified" style="color:#c62828;">
+        <div class="verified invalid">
+
             ✕ Certificate ID Missing
+
         </div>
 
         <p style="text-align:center;">
+
             Please scan a valid certificate QR code.
+
         </p>
 
     `;
 
-} else {
-
-    fetch(API_URL + "?id=" + encodeURIComponent(certificateId))
-
-        .then(response => response.json())
-
-        .then(data => {
-
-            if (data.status === "success") {
-
-                document.getElementById("result").innerHTML = `
-
-                    <div class="verified">
-                        ✓ Certificate Verified
-                    </div>
-
-                    <div class="info-row">
-                        <span class="label">
-                            Certificate ID
-                        </span>
-
-                        <span class="value">
-                            ${data.certificateId}
-                        </span>
-                    </div>
+}
 
 
-                    <div class="info-row">
-                        <span class="label">
-                            Student Name
-                        </span>
+// Certificate ID found
 
-                        <span class="value">
-                            ${data.studentName}
-                        </span>
-                    </div>
+else {
 
+    fetch(
+        API_URL + "?id=" +
+        encodeURIComponent(certificateId)
+    )
 
-                    <div class="info-row">
-                        <span class="label">
-                            Course Name
-                        </span>
+    .then(response => response.json())
 
-                        <span class="value">
-                            ${data.courseName}
-                        </span>
-                    </div>
+    .then(data => {
 
 
-                    <div class="info-row">
-                        <span class="label">
-                            Course Duration
-                        </span>
+        // Certificate found
 
-                        <span class="value">
-                            ${data.courseDuration}
-                        </span>
-                    </div>
+        if (data.status === "success") {
 
 
-                    <div class="info-row">
-                        <span class="label">
-                            Completion Date
-                        </span>
+            // Certificate status
 
-                        <span class="value">
-                            ${data.completionDate}
-                        </span>
-                    </div>
+            let statusText = data.certificateStatus;
 
 
-                    <div class="info-row">
-                        <span class="label">
-                            Issue Date
-                        </span>
-
-                        <span class="value">
-                            ${data.issueDate}
-                        </span>
-                    </div>
+            let statusClass = "valid";
 
 
-                    <div class="info-row">
-                        <span class="label">
-                            Institute Name
-                        </span>
+            if (
+                String(statusText).toUpperCase() !== "VALID"
+            ) {
 
-                        <span class="value">
-                            ${data.instituteName}
-                        </span>
-                    </div>
-
-
-                    <div class="info-row">
-                        <span class="label">
-                            Certificate Status
-                        </span>
-
-                        <span class="value valid">
-                            ${data.certificateStatus}
-                        </span>
-                    </div>
-
-                `;
-
-            } else {
-
-                document.getElementById("result").innerHTML = `
-
-                    <div class="verified"
-                         style="color:#c62828;">
-                        ✕ Certificate Not Found
-                    </div>
-
-                    <p style="text-align:center;">
-                        This certificate could not be verified.
-                    </p>
-
-                `;
+                statusClass = "invalid";
 
             }
 
-        })
 
-        .catch(error => {
+            // Display certificate
 
             document.getElementById("result").innerHTML = `
 
-                <div class="verified"
-                     style="color:#c62828;">
-                    ✕ Verification Error
+                <div class="verified ${statusClass}">
+
+                    ${statusClass === "valid"
+                        ? "✓ Certificate Verified"
+                        : "✕ Certificate Invalid"
+                    }
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Certificate ID
+                    </span>
+
+                    <span class="value">
+                        ${data.certificateId}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Student Name
+                    </span>
+
+                    <span class="value">
+                        ${data.studentName}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Course Name
+                    </span>
+
+                    <span class="value">
+                        ${data.courseName}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Course Duration
+                    </span>
+
+                    <span class="value">
+                        ${data.courseDuration}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Completion Date
+                    </span>
+
+                    <span class="value">
+                        ${formatDate(data.completionDate)}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Issue Date
+                    </span>
+
+                    <span class="value">
+                        ${formatDate(data.issueDate)}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Institute Name
+                    </span>
+
+                    <span class="value">
+                        ${data.instituteName}
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="label">
+                        Certificate Status
+                    </span>
+
+                    <span class="value ${statusClass}">
+
+                        ${statusText}
+
+                    </span>
+
+                </div>
+
+            `;
+
+        }
+
+
+        // Certificate not found
+
+        else {
+
+            document.getElementById("result").innerHTML = `
+
+                <div class="verified invalid">
+
+                    ✕ Certificate Not Found
+
                 </div>
 
                 <p style="text-align:center;">
-                    Unable to connect to the verification server.
+
+                    This certificate could not be verified.
+
                 </p>
 
             `;
 
-        });
+        }
+
+    })
+
+
+    // Connection error
+
+    .catch(error => {
+
+        document.getElementById("result").innerHTML = `
+
+            <div class="verified invalid">
+
+                ✕ Verification Error
+
+            </div>
+
+            <p style="text-align:center;">
+
+                Unable to connect to the verification server.
+
+            </p>
+
+        `;
+
+    });
 
 }
 
+
+
+// Format date
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+
+        return "";
+
+    }
+
+
+    const date = new Date(dateString);
+
+
+    if (isNaN(date.getTime())) {
+
+        return dateString;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+}
+
+
 </script>
 
+
 </body>
+
 </html>
